@@ -5,8 +5,8 @@ package shutil: import rmtree;
 
 pygame.init();
 pygame.font.init();
-new list RESOLUTION = ([600, 600]);
-new auto screen = (pygame.display.set_mode(RESOLUTION));
+new <Vector> RESOLUTION = Vector(600, 600);
+new auto screen = pygame.display.set_mode(RESOLUTION.toList(2));
 pygame.display.set_caption("Visual SIRD model simulator - thatsOven");
 
 if os.path.isdir("graphs") {
@@ -35,10 +35,10 @@ new bool STATISTICS = True,
          DRAWTEXT   = False;
 
 new list chosenInfectious, people = []; 
-chosenInfectious = [randint(0, RESOLUTION[0] // DISTANCE) * DISTANCE, randint(0, RESOLUTION[1] // DISTANCE) * DISTANCE];
+chosenInfectious = [randint(0, RESOLUTION.x // DISTANCE) * DISTANCE, randint(0, RESOLUTION.y // DISTANCE) * DISTANCE];
 
 new dynamic thisfont;
-thisfont = pygame.font.SysFont('Arial', (25 * RESOLUTION[0]) // 800);
+thisfont = pygame.font.SysFont('Arial', (25 * RESOLUTION.x) // 800);
 
 new auto clock = pygame.time.Clock();
 
@@ -46,9 +46,9 @@ enum State {
     SUSCEPTIBLE, INFECTIOUS, IMMUNE, DEAD
 }
 
-new function drawCross(x, y) {
-    pygame.draw.line(screen, (255, 255, 255), (x, y)             , (x + PERSONSIZE, y + PERSONSIZE));
-    pygame.draw.line(screen, (255, 255, 255), (x, y + PERSONSIZE), (x + PERSONSIZE, y             ));
+new function drawCross(position) {
+    pygame.draw.line(screen, (255, 255, 255), (position.x, position.y)             , (position.x + PERSONSIZE, position.y + PERSONSIZE));
+    pygame.draw.line(screen, (255, 255, 255), (position.x, position.y + PERSONSIZE), (position.x + PERSONSIZE, position.y             ));
 }
 
 new list negs;
@@ -67,8 +67,8 @@ new float colorConst = 255 / 100;
 
 new function computeGraphPoints(vals, center) {
     for i = 0; i < 4; i++ {
-        vals[i] = [round(center[0] + (negs[i][0] * xAngular * vals[i])), 
-                   round(center[1] + (negs[i][1] * yAngular * vals[i]))];
+        vals[i] = [round(center.x + (negs[i][0] * xAngular * vals[i])), 
+                   round(center.y + (negs[i][1] * yAngular * vals[i]))];
     }
     return vals;
 }
@@ -102,37 +102,10 @@ new class Infection() {
         this.mortalityRate    += randint(-MUTATIONQTY, MUTATIONQTY);
         this.immunizationTime += randint(-MUTATIONQTY, MUTATIONQTY);
 
-        if this.infectionRate < 0 {
-            this.infectionRate = 0;
-        } else {
-            if this.infectionRate > 100 {
-                this.infectionRate = 100;
-            }
-        }
-
-        if this.infectionRadius < 0 {
-            this.infectionRadius = 0;
-        } else {
-            if this.infectionRadius > RADIUS_LIMIT {
-                this.infectionRadius = RADIUS_LIMIT;
-            }
-        }
-
-        if this.mortalityRate < 0 {
-            this.mortalityRate = 0;
-        } else {
-            if this.mortalityRate > 100 {
-                this.mortalityRate = 100;
-            }
-        }
-
-        if this.immunizationTime < 1 {
-            this.immunizationTime = 1;
-        } else {
-            if this.immunizationTime > 100 {
-                this.immunizationTime = 100;
-            }
-        }
+        this.infectionRate    = Utils.limitToRange(this.infectionRate,    0, 100);
+        this.infectionRadius  = Utils.limitToRange(this.infectionRadius,  0, RADIUS_LIMIT);
+        this.mortalityRate    = Utils.limitToRange(this.mortalityRate,    0, 100);
+        this.immunizationTime = Utils.limitToRange(this.immunizationTime, 0, 100);
 
         if DRAWGRAPHS {
             new auto imageSurface = pygame.Surface((256, 256));
@@ -144,7 +117,7 @@ new class Infection() {
                 ((this.mortalityRate    * colorConst * 2) + 255) / 3,
             ];
 
-            pygame.draw.polygon(imageSurface, finalColor, computeGraphPoints(list(this), [128, 128]));
+            pygame.draw.polygon(imageSurface, finalColor, computeGraphPoints(list(this), Vector(128, 128)));
             pygame.image.save(imageSurface, os.path.join("graphs", "infection" + str(imageCount) + ".png"));
             imageCount++;
         }
@@ -155,9 +128,8 @@ new list stateColor;
 stateColor = [(0, 255, 0), (255, 0, 0), (0, 0, 255), (255, 255, 255)];
 
 new class Person() {
-    new method __init__(x, y, state=State.SUSCEPTIBLE, infection=None) {
-        this.x          = x;
-        this.y          = y;
+    new method __init__(position, state=State.SUSCEPTIBLE, infection=None) {
+        this.position   = position;
         this.state      = state;
         this.immCounter = 0;
         this.infection  = infection;
@@ -165,8 +137,8 @@ new class Person() {
 
     new method infectClose() {
         for i = 0; i < len(people); i++ {
-            if people[i].x in Utils.tolerance(this.x, this.infection.infectionRadius) and 
-               people[i].y in Utils.tolerance(this.y, this.infection.infectionRadius) {
+            if people[i].position.x in Utils.tolerance(this.position.x, this.infection.infectionRadius) and 
+               people[i].position.y in Utils.tolerance(this.position.y, this.infection.infectionRadius) {
                 if people[i].state == State.SUSCEPTIBLE and randint(0, 100) < this.infection.infectionRate {
                     people[i].state     = State.INFECTIOUS;
                     people[i].infection = this.infection.copy();
@@ -181,24 +153,11 @@ new class Person() {
 
     new method show() {
         if this.state != State.DEAD {
-            this.x += randint(-CHAOS, CHAOS);
-            this.y += randint(-CHAOS, CHAOS);
+            this.position.x += randint(-CHAOS, CHAOS);
+            this.position.y += randint(-CHAOS, CHAOS);
 
-            if this.x <= 0 {
-                this.x = CHAOS + PERSONSIZE;
-            } else {
-                if this.x >= RESOLUTION[0] {
-                    this.x = RESOLUTION[0] - CHAOS - PERSONSIZE;
-                }
-            }
-
-            if this.y <= 0 {
-                this.y = CHAOS + PERSONSIZE;
-            } else {
-                if this.y >= RESOLUTION[1] {
-                    this.y = RESOLUTION[1] - CHAOS - PERSONSIZE;
-                }
-            }
+            this.position.x = Utils.limitToRange(this.position.x, 0, RESOLUTION.x);
+            this.position.y = Utils.limitToRange(this.position.y, 0, RESOLUTION.y);
         }
         
         if this.infection is not None {
@@ -212,21 +171,23 @@ new class Person() {
                 this.infection  = None;
             }
         }
+
+        new <Vector> drawVect = this.position.getIntCoords() - (PERSONSIZE // 2);
         
         match this.state {
             case State.SUSCEPTIBLE {
-                pygame.draw.rect(screen, stateColor[this.state], (this.x - (PERSONSIZE // 2), this.y - (PERSONSIZE // 2), PERSONSIZE, PERSONSIZE));
+                pygame.draw.rect(screen, stateColor[this.state], drawVect.toList(2) + [PERSONSIZE, PERSONSIZE]);
             }
             case State.INFECTIOUS {
                 this.infectClose();
                 this.immCounter++;
-                pygame.draw.rect(screen, stateColor[this.state], (this.x - (PERSONSIZE // 2), this.y - (PERSONSIZE // 2), PERSONSIZE, PERSONSIZE));
+                pygame.draw.rect(screen, stateColor[this.state], drawVect.toList(2) + [PERSONSIZE, PERSONSIZE]);
             }
             case State.IMMUNE {
-                pygame.draw.rect(screen, stateColor[this.state], (this.x - (PERSONSIZE // 2), this.y - (PERSONSIZE // 2), PERSONSIZE, PERSONSIZE));
+                pygame.draw.rect(screen, stateColor[this.state], drawVect.toList(2) + [PERSONSIZE, PERSONSIZE]);
             }
             case State.DEAD {
-                drawCross(this.x, this.y);
+                drawCross(this.position);
             }
         }
     }
@@ -241,16 +202,16 @@ new function countStates() {
 }
 
 new int populationQty = 0;
-for y = DISTANCE; y < RESOLUTION[1]; y += DISTANCE {
-    for x = DISTANCE; x < RESOLUTION[0]; x += DISTANCE {
+for y = DISTANCE; y < RESOLUTION.y; y += DISTANCE {
+    for x = DISTANCE; x < RESOLUTION.x; x += DISTANCE {
         if [x, y] != chosenInfectious {
             if randint(0, 100) < QTIMUN {
-                people.append(Person(x, y, State.IMMUNE));
+                people.append(Person(Vector(x, y), State.IMMUNE));
             } else {
-                people.append(Person(x, y));
+                people.append(Person(Vector(x, y)));
             }
         } else {
-            people.append(Person(x, y, State.INFECTIOUS, Infection(TA, RADIUS, TM, TI)));
+            people.append(Person(Vector(x, y), State.INFECTIOUS, Infection(TA, RADIUS, TM, TI)));
         }
         populationQty++;
     }
