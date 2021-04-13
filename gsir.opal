@@ -112,7 +112,7 @@ new class Infection() {
             imageSurface.blit(baseTemplate, (0, 0));
             new list finalColor;
             finalColor = [
-                ((round(((this.infectionRate / 100) + (this.infectionRadius / RADIUS_LIMIT)) / 2) * 2) + 255) / 3,
+                ((round(((this.infectionRate / 100) + (this.infectionRadius / RADIUS_LIMIT))) * 2) + 255) / 3,
                 ((this.immunizationTime * colorConst * 2) + 255) / 3,
                 ((this.mortalityRate    * colorConst * 2) + 255) / 3,
             ];
