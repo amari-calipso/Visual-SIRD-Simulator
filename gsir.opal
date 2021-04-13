@@ -104,6 +104,7 @@ new class Infection() {
 
         if this.infectionRate < 0 {
             this.infectionRate = 0;
+        } else {
             if this.infectionRate > 100 {
                 this.infectionRate = 100;
             }
@@ -119,6 +120,7 @@ new class Infection() {
 
         if this.mortalityRate < 0 {
             this.mortalityRate = 0;
+        } else {
             if this.mortalityRate > 100 {
                 this.mortalityRate = 100;
             }
@@ -126,6 +128,7 @@ new class Infection() {
 
         if this.immunizationTime < 1 {
             this.immunizationTime = 1;
+        } else {
             if this.immunizationTime > 100 {
                 this.immunizationTime = 100;
             }
