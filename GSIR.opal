@@ -1,5 +1,3 @@
-$define HOME_DIR PROJECT_DIRECTORY
-
 package opal: import *;
 package random: import randint;
 package shutil: import rmtree;
