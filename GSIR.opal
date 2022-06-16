@@ -30,7 +30,7 @@ new <Vector> PERSON_DIM = Vector(PERSONSIZE, PERSONSIZE);
 new <Graphics> graphics;
 graphics = Graphics(RESOLUTION, FRAMERATE, caption = "Visual SIRD model simulator - thatsOven", fontSize = (25 * RESOLUTION.x) // 800);
 
-new auto baseTemplate = graphics.loadImage(os.path.join("HOME_DIR", "template.png"));
+new auto baseTemplate = graphics.loadImage(os.path.join(HOME_DIR, "template.png"));
 
 new list people, stats;
 
@@ -101,7 +101,7 @@ new class Infection {
             ];
 
             pygame.draw.polygon(imgSurf, color, this.__computeGraphPoints());
-            pygame.image.save(imgSurf, os.path.join("HOME_DIR", "graphs", "infection" + str(Infection.imageCount) + ".png"));
+            pygame.image.save(imgSurf, os.path.join(HOME_DIR, "graphs", "infection" + str(Infection.imageCount) + ".png"));
             Infection.imageCount++;
         }
     }
@@ -227,7 +227,7 @@ new function __quit(event) {
             }
         }
 
-        pygame.image.save(surf, os.path.join("HOME_DIR", "stats.png"));
+        pygame.image.save(surf, os.path.join(HOME_DIR, "stats.png"));
     }
 
     quit;
@@ -255,7 +255,7 @@ new function update() {
 }
 
 main {
-    new auto dir = os.path.join("HOME_DIR", "graphs");
+    new auto dir = os.path.join(HOME_DIR, "graphs");
 
     if os.path.isdir(dir) {
         rmtree(dir);
