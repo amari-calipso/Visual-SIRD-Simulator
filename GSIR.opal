@@ -3,7 +3,7 @@ package random: import randint;
 package shutil: import rmtree;
 import math, os, pygame;
 
-new <Vector> RESOLUTION = Vector(600, 600);
+new Vector RESOLUTION = Vector(600, 600);
 
         # starting distance between people
 new int DISTANCE     = 20,
@@ -35,9 +35,9 @@ new bool STATISTICS = True,
 
 new int CENTER_TMP = 128;
 new float COLOR_CONST = 255 / 100;
-new <Vector> PERSON_DIM = Vector(PERSONSIZE, PERSONSIZE);
+new Vector PERSON_DIM = Vector(PERSONSIZE, PERSONSIZE);
 
-new <Graphics> graphics;
+new Graphics graphics;
 graphics = Graphics(RESOLUTION, FRAMERATE, caption = "Visual SIRD model simulator - thatsOven", fontSize = (25 * RESOLUTION.x) // 800);
 
 new auto baseTemplate = graphics.loadImage(os.path.join(HOME_DIR, "template.png"));
@@ -198,7 +198,7 @@ new class Person {
 }
 
 new function countStates() {
-    new <Array> SIRD = Array(4, int);
+    new Array SIRD = Array(4, int);
 
     for i = 0; i < len(people); i++ {
         SIRD[people[i].state]++;
