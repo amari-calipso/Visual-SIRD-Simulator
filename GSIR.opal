@@ -2,6 +2,7 @@ package opal: import *;
 package random: import randint;
 package shutil: import rmtree;
 import math, os, pygame;
+$args ["--static"]
 
 new Vector RESOLUTION = Vector(600, 600);
 
