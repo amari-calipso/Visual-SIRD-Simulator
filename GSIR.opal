@@ -210,14 +210,15 @@ new function countStates() {
 
 @graphics.event(QUIT);
 new function __quit(event) {
+    new float drawConst;
+    new int finalXRes, y, val;
+
     if STATISTICS {
-        new float drawConst = GRAPH_HEIGHT / qty;
-        new int finalXRes   = len(stats);
+        drawConst = GRAPH_HEIGHT / qty;
+        finalXRes = len(stats);
 
         new auto surf = pygame.Surface((finalXRes, GRAPH_HEIGHT));
         surf.fill((0, 0, 0));
-
-        new int y, val;
 
         for x in range(finalXRes) {
             y = GRAPH_HEIGHT;
@@ -277,13 +278,12 @@ main {
     stats  = [];
     people = [];
 
-    new tuple chosen;
-    chosen = (
+    new tuple chosen = (
         randint(0, RESOLUTION.x // DISTANCE) * DISTANCE,
         randint(0, RESOLUTION.y // DISTANCE) * DISTANCE
     );
 
-    new int qty = 0;
+    new int qty = 0, x, y;
     for y = DISTANCE; y < RESOLUTION.y; y += DISTANCE {
         for x = DISTANCE; x < RESOLUTION.x; x += DISTANCE, qty++ {
             if (x, y) != chosen {
