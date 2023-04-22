@@ -6,29 +6,19 @@ $args ["--static"]
 
 new Vector RESOLUTION = Vector(600, 600);
 
-        # starting distance between people
-new int DISTANCE     = 20,
+new int DISTANCE     = 20, # starting distance between people
         FRAMERATE    = 10,
         GRAPH_HEIGHT = 512,
         PERSONSIZE   = 6,
-        # infection rate
-        TA           = 40,
-        # infection radius
-        RADIUS       = 20,
-        # immunization time
-        TI           = 5,
-        # mortality rate
-        TM           = 10,
-        # maximum quantity of movement of people per iteration
-        CHAOS        = 3,
-        # quantity of immune people at the start of the simulation
-        QTIMUN       = 0,
-        # rate of mutation of the infection
-        MUTABILITY   = 5,
-        # quantity of mutation per mutation
-        MUTATIONQTY  = 1,
-        # limit of infection radius (used as a check during mutation)
-        RADIUS_LIMIT = 30;
+        TA           = 40, # infection rate
+        RADIUS       = 20, # infection radius
+        TI           = 5,  # immunization time
+        TM           = 10, # mortality rate
+        CHAOS        = 3,  # maximum quantity of movement of people per iteration
+        QTIMUN       = 0,  # quantity of immune people at the start of the simulation
+        MUTABILITY   = 5,  # rate of mutation of the infection
+        MUTATIONQTY  = 1,  # quantity of mutation per mutation
+        RADIUS_LIMIT = 30; # limit of infection radius (used as a check during mutation)
 
 new bool STATISTICS = True,
          DRAWGRAPHS = True,
@@ -47,8 +37,7 @@ new list people, stats;
 
 new class Infection {
     new int imageCount = 0;
-    new tuple negs;
-    negs = (
+    new tuple negs = (
         Vector(-1, -1),
         Vector( 1, -1),
         Vector( 1,  1),
@@ -104,8 +93,7 @@ new class Infection {
             new auto imgSurf = pygame.Surface((256, 256));
             imgSurf.blit(baseTemplate, (0, 0));
 
-            new dynamic color;
-            color = [
+            new dynamic color = [
                 ((round(((this.rate / 100) + (this.radius / RADIUS_LIMIT))) * 2) + 255) / 3,
                 ((this.duration  * COLOR_CONST * 2) + 255) / 3,
                 ((this.mortality * COLOR_CONST * 2) + 255) / 3,
