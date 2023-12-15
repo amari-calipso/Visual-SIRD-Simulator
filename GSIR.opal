@@ -1,7 +1,7 @@
 package opal: import *;
 package random: import randint;
 package shutil: import rmtree;
-import math, os, pygame;
+import math, os, pygame, sys;
 $args ["--static"]
 
 new Vector RESOLUTION = Vector(600, 600);
@@ -230,7 +230,7 @@ new function __quit(event) {
         pygame.image.save(surf, os.path.join(HOME_DIR, "stats.png"));
     }
 
-    quit;
+    sys.exit(0);
 }
 
 @graphics.update;
