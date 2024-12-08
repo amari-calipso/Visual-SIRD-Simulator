@@ -29,7 +29,7 @@ new float COLOR_CONST = 255 / 100;
 new Vector PERSON_DIM = Vector(PERSONSIZE, PERSONSIZE);
 
 new Graphics graphics;
-graphics = Graphics(RESOLUTION, FRAMERATE, caption = "Visual SIRD model simulator - thatsOven", fontSize = (25 * RESOLUTION.x) // 800);
+graphics = Graphics(RESOLUTION, FRAMERATE, caption = "Visual SIRD model simulator", fontSize = (25 * RESOLUTION.x) // 800);
 
 new auto baseTemplate = graphics.loadImage(os.path.join(HOME_DIR, "template.png"));
 
